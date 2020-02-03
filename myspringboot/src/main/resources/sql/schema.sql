@@ -1,0 +1,5 @@
+CREATE TABLE `dept` (
+	`id` BIGINT NOT NULL AUTO_INCREMENT,
+	`dept_name` VARCHAR(50) NOT NULL,
+	PRIMARY KEY (`id`)
+);

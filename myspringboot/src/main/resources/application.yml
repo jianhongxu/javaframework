@@ -1,0 +1,79 @@
+
+# yml语法  属性： 空格 值   大小写敏感  字符串不用加单 双 引号；  单引号不会转义  双引号不会转移
+#server:
+#  port: 8082
+
+##对象 两种方式
+#friends:
+#       lastName: xujianhong
+#       age: 18
+#
+#friends: {lastName: xujianhong,  age: 18}
+#
+#
+##数组  list  set 两种写发
+#pets:
+# -cat
+# -dog
+#
+#pets: [cat, dog]
+
+person:
+      age: 18
+      boss: false
+      brithday: 2018/02/01
+      maps: {k1: v1,k2: v2}
+      dog:
+          name: 下沟
+          age: 123
+
+
+#配置springboot默认的数据源
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/jdbc?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    initialization-mode: always
+
+
+
+    type: com.alibaba.druid.pool.DruidDataSource
+#    schema:
+#      - classpath:sql/schema.sql
+    # 初始化连接池个数
+    initialSize: 5
+    # 最小连接池个数——》已经不再使用，配置了也没效果
+    minIdle: 2
+    # 最大连接池个数
+    maxActive: 20
+    # 配置获取连接等待超时的时间，单位毫秒，缺省启用公平锁，并发效率会有所下降
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 300000
+    # 用来检测连接是否有效的sql，要求是一个查询语句。
+    # 如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会起作用
+    validationQuery: SELECT 1 FROM DUAL
+    # 建议配置为true，不影响性能，并且保证安全性。
+    # 申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+    testWhileIdle: true
+    # 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+    testOnBorrow: false
+    # 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+    testOnReturn: false
+    # 打开PSCache，并且指定每个连接上PSCache的大小
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    # 通过别名的方式配置扩展插件，多个英文逗号分隔，常用的插件有：
+    # 监控统计用的filter:stat
+    # 日志用的filter:log4j
+    # 防御sql注入的filter:wall         stat,wall,log4j
+    filters: stat,wall
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+    # 合并多个DruidDataSource的监控数据
+    useGlobalDataSourceStat: true
+
