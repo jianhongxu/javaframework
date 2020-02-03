@@ -17,6 +17,7 @@ public class MyErrorAttributes extends DefaultErrorAttributes {
 
     @Override
     public Map<String, Object> getErrorAttributes(WebRequest webRequest, boolean includeStackTrace) {
+        //调用父类的方法
         Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, includeStackTrace);
         //自定义错误信息
         errorAttributes.put("companyCode","zhognliangrong");

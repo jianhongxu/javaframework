@@ -1,5 +1,6 @@
 package com.xjh.myspringboot;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
@@ -130,6 +131,7 @@ import org.springframework.context.annotation.ImportResource;
 
 //可以导入spring的配置xml文件  @ImportResource(locations = )
 @SpringBootApplication
+@MapperScan("com.xjh.myspringboot.mapper")
 public class MyspringbootApplication {
 
     public static void main(String[] args) {
