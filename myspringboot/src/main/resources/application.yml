@@ -77,3 +77,16 @@ spring:
     # 合并多个DruidDataSource的监控数据
     useGlobalDataSourceStat: true
 
+
+    #jpa的配置
+  jpa:
+    #打印sql语句
+    show-sql: true
+    #自动创建表
+    hibernate:
+      ddl-auto: update
+
+
+
+
+

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
@@ -27,6 +28,10 @@ class MyspringbootApplicationTests {
     //租入数据源
     @Autowired
     DataSource dataSource;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -62,6 +67,8 @@ class MyspringbootApplicationTests {
     public void test03() throws Exception{
         System.out.println("拿到的数据源是:"+dataSource.getClass());
         System.out.println("获取到的连接...."+dataSource.getConnection());
+
+        System.out.println("获取的jdbcTempalte是:"+jdbcTemplate);
     }
 
 
