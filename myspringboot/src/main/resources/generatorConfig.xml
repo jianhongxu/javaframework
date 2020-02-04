@@ -50,13 +50,24 @@
 			<property name="enableSubPackages" value="true"/>
 		</javaClientGenerator>
 
-		<table tableName="emply" domainObjectName="Emply"
+		<table tableName="cache_dept" domainObjectName="CacheDept"
 			   enableCountByExample="false"
 			   enableUpdateByExample="false"
 			   enableDeleteByExample="false"
 			   enableSelectByExample="false"
 			   selectByExampleQueryId="false">
-			<property name="useActualColumnNames" value="true"/>
+			<property name="useActualColumnNames" value="false"/>
+			<!--表中主键自增长的配置-->
+			<generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+		</table>
+
+		<table tableName="cache_emp" domainObjectName="CacheEmp"
+			   enableCountByExample="false"
+			   enableUpdateByExample="false"
+			   enableDeleteByExample="false"
+			   enableSelectByExample="false"
+			   selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false"/>
 			<!--表中主键自增长的配置-->
 			<generatedKey column="id" sqlStatement="Mysql" identity="true"/>
 		</table>

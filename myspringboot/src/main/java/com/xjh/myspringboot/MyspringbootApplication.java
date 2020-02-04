@@ -3,6 +3,7 @@ package com.xjh.myspringboot;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ImportResource;
 /**
  * spring boot 学习模块
@@ -132,6 +133,8 @@ import org.springframework.context.annotation.ImportResource;
 //可以导入spring的配置xml文件  @ImportResource(locations = )
 @SpringBootApplication
 @MapperScan("com.xjh.myspringboot.mapper")
+//开启缓存功能
+@EnableCaching
 public class MyspringbootApplication {
 
     public static void main(String[] args) {
