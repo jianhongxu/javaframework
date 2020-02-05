@@ -1,6 +1,7 @@
 package com.xjh.myspringboot;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -135,6 +136,8 @@ import org.springframework.context.annotation.ImportResource;
 @MapperScan("com.xjh.myspringboot.mapper")
 //开启缓存功能
 @EnableCaching
+//开启Rabbit功能
+@EnableRabbit
 public class MyspringbootApplication {
 
     public static void main(String[] args) {

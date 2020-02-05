@@ -106,4 +106,12 @@ spring:
           # 从连接池中获取连接最大等待时间（默认为-1，单位为毫秒，负数表示无限）
           max-wait: -1
 
+          
+  #rabbitmq的配置
+  rabbitmq:
+    addresses: localhost
+    username: guest
+    password: guest
+    port: 5672
+
 
