@@ -115,3 +115,13 @@ spring:
     port: 5672
 
 
+  #ES配置
+  data:
+    elasticsearch:
+          repositories:
+            enabled: true
+          # 集群模式下用逗号分开
+          cluster-nodes: 192.168.1.5:9300
+          cluster-name: docker-cluster
+
+
