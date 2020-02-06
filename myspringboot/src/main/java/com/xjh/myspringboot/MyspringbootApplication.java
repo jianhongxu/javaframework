@@ -6,6 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * spring boot 学习模块
  *
@@ -138,6 +140,10 @@ import org.springframework.context.annotation.ImportResource;
 @EnableCaching
 //开启Rabbit功能
 @EnableRabbit
+//开启异步任务功能
+@EnableAsync
+//开启定时任务
+@EnableScheduling
 public class MyspringbootApplication {
 
     public static void main(String[] args) {
