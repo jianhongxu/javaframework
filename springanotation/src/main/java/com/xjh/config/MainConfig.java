@@ -7,6 +7,8 @@ import com.xjh.dto.Car;
 import com.xjh.dto.Color;
 import com.xjh.dto.Red;
 import com.xjh.dto.User;
+import com.xjh.mybatisspring.MyMapperScan;
+import com.xjh.mybatisspring.MybatisImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -22,13 +24,15 @@ import java.beans.PropertyVetoException;
 
 @Configuration
 @ComponentScan("com.xjh")
-@Import({Color.class, Red.class, MyImportSelector.class, MyImportBeanDefinitionRegister.class})
+@Import({Color.class, Red.class, MyImportSelector.class, MyImportBeanDefinitionRegister.class, MybatisImportBeanDefinitionRegistrar.class})
 //加载外部的配置文件  一遍可以使用${name}的方式取值
 @PropertySource({"classpath:user.properties"})
 //开启基于注解的aop功能
 @EnableAspectJAutoProxy
 //开启事务功能
 @EnableTransactionManagement
+//探讨mybat-spring中间件的原理
+@MyMapperScan
 public class MainConfig {
 
     /**
@@ -43,11 +47,12 @@ public class MainConfig {
      *
      * 往iod容器中加入bean有三种方式
      * 1 @bean
-     * 2 @ComponetSan
+     * 2 @ComponetSan + @Component
      * 3 @Import的方式导入  默认id是全类名
      * 4 @ImportSelector
      * 5  ImportBeanDefinitionRegister 手工注册的方式
      * 6 使用FactoryBean的方式
+     * 7 还可以通过BeanFactoryPostProcessor的方式
      *
      *
      * bean的生命周期  初始化和销

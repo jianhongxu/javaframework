@@ -1,5 +1,6 @@
 package com.xjh.aop;
 
+import org.springframework.cglib.proxy.Proxy;
 import sun.misc.ProxyGenerator;
 
 import java.io.FileOutputStream;
@@ -32,5 +33,9 @@ public class Test {
         fo.write(proxyClassFile);
         fo.flush();
         fo.close();
+
+
+        //springg的proxy代理对象  接口也可以生成代理对象
+        //Proxy.newProxyInstance()
     }
 }

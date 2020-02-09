@@ -28,6 +28,8 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
        //容器中一共定义有多少个bean
        int count = beanFactory.getBeanDefinitionCount();
 
+
+
         System.out.println("容器中一共定义有多少个bean:"+count);
         System.out.println("所有的bean的名字是:  "+Arrays.toString(beanNames));
 
