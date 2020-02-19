@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * 1/hello word
  * 2/yaml简介
  * 3/pringboot配置文件 .properties @ConfigurationProperties 和@Value区别 以及spel表达式
- * 4/ 可以通过@PropertySource(value={"classpath:/person.properties"})指定资源文件陆军  可
+ * 4/ 可以通过@PropertySource(value={"classpath:/person.properties"})指定资源文件路径  可
  *     以通过 @ImportResource(locations = )指定外部的xml配置文件
  * 5/ spring配置文件中的占位符 ${}
  * 6 d多环境profile的支持 以及配置外部配置文件的位置以及默认springboot加载配置文件的方式
@@ -105,7 +105,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  *    激活profile 1可以在默认的配置文件中激活即可：spring.profiles.active=pro
  *    2 yml中可以定义文档快的方式
- *    3 使用命令行的方式 --spring.profile.active = pro
+ *    3 使用命令行参数的方式 --spring.profile.active = pro
  *    4 虚拟机方式：-Dspring.profile.active=pro
  *
  *

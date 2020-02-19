@@ -16,7 +16,6 @@ import java.util.Map;
 @ControllerAdvice
 public class MyExceptionHandler {
 
-
     /**
      * 浏览器和客户端都是返回json数据
      * @param e
@@ -29,7 +28,6 @@ public class MyExceptionHandler {
         result.put("code","code.40122");
         result.put("excepiton", e.getMessage());
         return result;
-
     }*/
 
 
@@ -43,6 +41,8 @@ public class MyExceptionHandler {
         Map<String, Object> result = new HashMap<>();
         result.put("code","code.40122");
         result.put("excepiton", e.getMessage());
+
+        //在控制层这里设置值， 然后再DefaultErrorAttributes的子类中取出值， 再返回到页面端。
         request.setAttribute("ext",result);
 
         //传入我们自己的错误状态码

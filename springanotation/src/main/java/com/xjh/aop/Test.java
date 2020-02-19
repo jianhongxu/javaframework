@@ -4,12 +4,18 @@ import org.springframework.cglib.proxy.Proxy;
 import sun.misc.ProxyGenerator;
 
 import java.io.FileOutputStream;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @autor xujianhong
  * @date 2020/2/9 0:48
  */
 public class Test {
+
+
+    public int add(int a, int b){
+        return a+b;
+    }
 
     /**
      * spring的动态代理  默认是看代理的对象是否实现了接口 如果实现接口 那使用jdk动态代理 如果没有实现接口则使用cglib的方式创建。
@@ -34,6 +40,9 @@ public class Test {
         fo.flush();
         fo.close();
 
+        new Test().add(2,3);
+
+        TimeUnit.SECONDS.sleep(120);
 
         //springg的proxy代理对象  接口也可以生成代理对象
         //Proxy.newProxyInstance()

@@ -1,0 +1,380 @@
+
+2020 02 03======================================
+1、spring boot默认处理错误的机制（主要逻辑是在：ErrorMvcAutoConfiguration， DefaultErrorAttributes就是错误的属性值）
+   1）有模版引擎的情况下 error/状态码，发生状态码错误就会到对应的状态码.html页面
+      可以使用4xx和5xx来匹配对应的错误页面
+   2）没有模版引擎的时候 可以放在静态资源文件夹下的error/错误页面
+   3）模版引擎和静态资源文件夹都没有的情况，来到springboot默认的空白页面
+
+   自定异常返回json数据  需要写一个类 标注@ControllerAdvice  方法上标注@ExceptionHandler({MyExcepiton.class})
+   4）将自定义的异常信息返回出去
+      自定义一个类继承 DefaultErrorAttributes 重写getErrorAttributes()方法 在这个方法中加入自定义的各种错误异常信息 加入spring容器即可
+
+2、spring boot注册servlet三大组件
+   ServletRegistrationBean（往spring 容器中添加ServletRegistrationBean 这个类有添加servlet的方法）
+   FilterRegistrationBean、（往spring 容器中添加FilterRegistrationBean 这个类有添加Filter的方法）
+   ServletListenerRegistrationBean（往spring 容器中添加ServletListenerRegistrationBean 这个类有添加Listener的方法）
+
+3、spring boot jdbc和自动配置原理
+   xxxTempalet、 xxRepository来简化我们对数据库的操作。
+   org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration 数据源选择的配置
+   org.springframework.boot.autoconfigure.jdbc.DataSourceProperties  spring数据源可以配置的所有属性
+   DataSourceInitializer(中有执行sql脚本语句的方法 在数据源创建好后)  sql脚本默认命名： schema-*.sql 和data-*.sql 也可以在配置文件中自定义schema:spring.datasource.schema=
+
+    #配置springboot默认的数据源
+    spring:
+      datasource:
+        username: root
+        password: root
+        url: jdbc:mysql://localhost:3306/jdbc?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        initialization-mode: always #2.0需要配置这个
+    #    schema:
+    #      - classpath:sql/schema.sql
+
+
+4、springboot 整合druid数据源
+    引入druid数据源的jar包
+    配置文件中配置夏宫数据源配置  @Bean  @ConfigurationProperties(prefix = "spring.datasource")的方式配置DruidDataSource
+    @Bean
+        public ServletRegistrationBean statViewServlet(){
+            ServletRegistrationBean registrationBean = new ServletRegistrationBean();
+            registrationBean.setServlet(new StatViewServlet());
+            registrationBean.addUrlMappings("/druid/*");
+
+            Map<String,Object> initMap = new HashMap<>();
+            initMap.put("loginUsername","admin");
+            initMap.put("loginPassword","123456");
+            initMap.put("allow","192.168.2.101");
+            initMap.put("deny","127.0.0.1");
+            // 是否可以重置数据源，禁用HTML页面上的“Reset All”功能
+            initMap.put("resetEnable", "false");
+
+            registrationBean.setInitParameters(initMap);
+            return registrationBean;
+        }
+        /**
+         * 注册druid的filter
+         * @return
+         */
+        @Bean
+        public FilterRegistrationBean webStatFilter(){
+            FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+            filterRegistrationBean.setFilter(new WebStatFilter());
+            //所有请求进行监控处理
+            filterRegistrationBean.addUrlPatterns("/*");
+            //添加不需要忽略的格式信息
+            filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.css,/druid/*");
+
+            return filterRegistrationBean;
+        }
+
+5、springboot整合mybatis
+   1 是全注解版  只需要加一个@Mapper注解就可以了 接口方法里结合 @Select @Update @Insert等注解 (注意id自增长配置 返回)
+               配置类需要自己写
+   2 是xml配置版  在spring配置文件里配置mybatis全局配置文件和mapper的配置文件路径 ，配置可以驼峰命名发
+     编写配置文件通过mybatis-generator-maven-plugin maven插件自动生成xml配置。
+
+    properties中的mybatis配置
+     #指定mybatis全局配置文件的路径
+     #mybatis.config-location=
+     #指定mybatis 所有mapper xml文件的位置
+     mybatis.mapper-locations= classpath:mybatis/mapper/*.xml
+     #开启驼峰命名法
+     mybatis.configuration.map-underscore-to-camel-case= true
+
+
+======================================
+2020 02 04
+1、spring data
+   spring data（spring data提供统一访问数据的api  提供各种XXRepostiory/xxTemplate..）->JPA->Hibernate
+   1 配置jpa
+     spring：
+           #jpa的配置
+         jpa:
+           #打印sql语句
+           show-sql: true
+           #自动创建表
+           hibernate:
+             ddl-auto: update
+   2 编写entity和xxRepository 就可以了
+
+
+2、springboot 自定义starter
+   @Configuration
+   @ConditionalXXX
+   @AutoConfigureAfter
+   @Bean
+   @ConfigurationProperties(pre="xx")
+   @EnableConfigurationProperties({WebMvcProperties.class, ResourceProperties.class})
+   1写配置类
+   2写xxxAutoconfiguratrion类 在这个 类中将要注入的bean加入容器
+   3在META-INF/spring.factories 添加 org.springframework.boot.autoconfigure.EnableAutoConfiguration=第二步中的xxxAutoconfiguratrion类
+
+   可以参照WebMvcAutoConfiguration编写自己的starter
+
+
+3、 springboot整合缓存(缓存工程管理器、 缓存工厂、 缓存管理器、 缓存对象)
+   jsr-107定义了缓存规范： 有5个类
+    第一步 引用缓存依赖和开启缓存功能  启动类上标注//开启缓存功能 @EnableCaching
+
+    在缓存的方法上标注@Cacheable
+    @Cacheable属性cacheNames/Value:指定缓存组件的名称
+        key：缓存使用的key 默认使用方法参数的值 1-方法的返回值
+        keyGenerator：key的生成器 和 key只能选一个
+        cacheManager/cacheResolver:指定缓存管理器 二者只选一个
+        condition：满足条件时再缓存 如condition="#id>0"
+        unless：否定缓存 当满足条件时不缓存 可以取到结果 如 unless="#result==null"
+        sync：是否开启异步模式
+
+  @CachePut(cacheNames = "emp", key = "#result.id") 是先调用目标方法 然后将目标方法的结果缓存起来
+
+  @CacheEvict(cacheNames = "emp", key = "#id")
+  public void deleteEmpById(Long id){
+
+  @Caching(cacheable = {@Cacheable(cacheNames = "emp", key="#name")},put = {
+              @CachePut(cacheNames = "emp", key="#result.address"),
+              @CachePut(cacheNames = "emp", key="#result.age")
+      })
+
+  @CacheConfig(cacheNames = "emp")标注在类上 是抽取公共的缓存配置
+
+
+  spring boot在没有配置任何缓存管理器的时候使用默认的缓存管理器： 序列化对象使用的是默认的jdk序列化 使用currentHashMap作为缓存的对象
+  如果配置了redis 则默认是用redis缓存管理器， 序列化机制也是使用默认的jdk序列化机制 所以需要自定定义对象的序列化方式 比如序列化为json然后再存到redsi中
+
+
+
+
+
+
+===========20200205===========================
+4、springbbot整合消息中间件
+   点对点和发布订阅的方式 jms(java平台)和amqp(跨平台、传输是字节数组)；
+   spring-jms模块提供对JMS的支持；
+   spring-rabbit提供对AMQP的支持；
+   提供JmsTempalte和 RabbitTemplate来发送消息
+   @JmsLisener和@RabbitListener注册在方法上监听消息代理发布的消息
+   @EnableJms、@EnableRabbit开启支持
+
+   springboot自动配置 -JmsAutoConfiguration和RabbitConfiguration
+
+   MAQP中消息机制：
+    有消息产生者、消息服务器broker(exchange交换器/Binding/消息队列)、消息消费者；
+    exhange主要有三种： direct（点对点）、fanout（全发）、
+                   topic（#匹配0和多个单词 *匹配一个单词）、header(使用很少)
+
+   编程使到的对象主要有：RabbitTemplate 和 AmqAdmin、 Exchange、Queue、Bling  @RabbitListener和@EnableRabbit
+
+   （rabbitmq安装后需要启动rabbitmq的服务和rabbitmq的rabbitmq-plugins enable rabbitmq_management 服务）
+
+
+5、检索（整合ElasticSearch），
+   默认spring boot是使用spring-data操作es（引入spring-boot-starter-data-elasticsearch）
+
+   有两种方式可以操作es 1是使用jest
+                     2是使用spring data
+   特别注意 springdata和es的版本之间的映射关系
+
+
+6、 任务（异步任务，定时任务，邮件任务），
+    异步任务：两个注解@EnableAsync 和@Async
+    定时任务：@EnableScheduling   @Scheduled(cron = "0 * * * * MON-FRI")
+    邮件发送： 整合spring-boot-starter-mail 配置邮件信息
+    spring.mail.username=363722188@qq.com
+    spring.mail.password=krownchottcxbjhg
+    spring.mail.host=smtp.qq.com
+    spring.mail.properties.smtp.ssl.enable = true
+
+===========20200206===========================
+7、安全（整合SpringSecurity）
+   整合SpringSecurity 可以整合SpringSecurity和themlefeal整合(在模板文件中可以直接引用Spring Security响应的标签 需要在pom中引入对应的依赖和在模板文件中引入对应的命名空间)
+   主要功能是 认证(登陆校验和赋予哪些角色)/ 注销/记住我功能/ 授权(添加url访问规则 哪些url哪些角色可以访问)
+   （这张没有自己写代码验证...）
+
+
+8、分布式
+   分布式系统中涉及(配置管理/服务发现/熔断/路由/微代理/控制总线/一次性token/全局锁/leader选举
+   分布式session/集群状态)
+
+   spring boot整合dubbo加 zk  注意(防火墙要关闭、zk连接的客户端的版本 以及dubbo和spring boot的版本要对应)
+   **记录一个问题：我本地虚拟机中装的docker 里装的zookeeper连接不上
+   整合例子：D:\code2019\dubbo-springboot-zookeeper  本地zk可以跑通
+   github上下的一个例子:D:\code2019\github上例子\springbootexamples-master本地zk可以跑通
+
+
+9、开发热部署
+   引用spring-devtools ctrl+F9
+
+===========20200207===========================
+10、监控管理
+   引入spring-boot-starter-actuator 可以访问spring boot的各种指标信息  可以远程关闭springboot应用
+   可以自定义健康信息
+
+
+
+*******************************************百分之百大厂面试必问spring，AOP,IOC，JAVA虚拟机，线程池，高并发， HashMap *******************************************************************************************************
+https://www.bilibili.com/video/av81268629?p=10
+===========20200209===========================
+1）mybatis-spring整合中间jar的源码探讨:
+  主要使用了FactoryBean和spring bean的后置处理器ImportBeanDefinitionRegistrar。
+
+2）mybatis源码解析：
+  主要是解析xml   数据源工厂默认使用PooledDataSourceFactory 默认是用是数据源是：PooledDataSource  connection是一个代理对象PooledConnection
+  连接池使用的是：PoolState 这个对象
+  mybatis默认一级缓存是开启的， 解析mapper的时候有四种 package/recource/url/class package是最先被解析。
+
+  JdbcType类中定义了jdbc的类型。
+
+  mybatis 二级缓存的使用例子：
+          <mapper>
+             <!--开启本mapper的namespace下的二级缓存-->
+              <!--
+                  eviction:代表的是缓存回收策略，目前MyBatis提供以下策略。
+                  (1) LRU,最近最少使用的，一处最长时间不用的对象
+                  (2) FIFO,先进先出，按对象进入缓存的顺序来移除他们
+                  (3) SOFT,软引用，移除基于垃圾回收器状态和软引用规则的对象
+                  (4) WEAK,弱引用，更积极的移除基于垃圾收集器状态和弱引用规则的对象。这里采用的是LRU，
+                          移除最长时间不用的对形象
+                  flushInterval:刷新间隔时间，单位为毫秒，这里配置的是100秒刷新，如果你不配置它，那么当
+                  SQL被执行的时候才会去刷新缓存。
+                  size:引用数目，一个正整数，代表缓存最多可以存储多少个对象，不宜设置过大。设置过大会导致内存溢出。
+                  这里配置的是1024个对象
+                  readOnly:只读，意味着缓存数据只能读取而不能修改，这样设置的好处是我们可以快速读取缓存，缺点是我们没有
+                  办法修改缓存，他的默认值是false，不允许我们修改
+              -->
+              <cache eviction="LRU" flushInterval="100000" readOnly="true" size="1024"/>
+              <!--刷新二级缓存-->
+            <update id="updateByPrimaryKey" parameterType="com.demo.mybatis.pojo.User" flushCache="true">
+              update user
+              set name = #{name,jdbcType=VARCHAR},
+                age = #{age,jdbcType=INTEGER}
+              where id = #{id,jdbcType=INTEGER}
+            </update>
+
+===========20200210===========================
+mysql的索引优化：
+mysql如果没有建主键 会找第一个unique字段 如果有则作为主键 如果没有会自动生成一列隐形的主键。
+hash： 查询速度快，但是不能按索引排序 不能范围查找 而且不支持like查询 还有就是hash冲突将会让查询效率变低。
+二叉树： 在一定条件下会退化为链表  左小右大
+b树： 节点存了数据和索引 高廋形树
+b+树： 非叶子节点只存主键索引和引用 叶子节点存数据  而且每块数据有指针（类似于链表有指针） 叶子节点的数据是按索引从小到大依次排列的
+innerdb：索引和数据是在一个文件 聚集索引  mysame:索引和数据是分开的 非聚集索引。
+计算机磁盘默认的最小单位是4kb 所有的读取都应该是 n*4kb  mysql默认的页大小是16kb。
+联合索引遵循最左匹配原则(联合索引的建 就是每个字段对应的值 从上到下)
+
+
+===========20200211===================================================================================
+二叉搜索树:  左节点小于右节点   中序遍历输出是从小到大的顺序， 在极端情况可能退化为链表的数据结构
+红黑树(平衡二叉树的变种)： 红黑树有几个特点， 比如相邻的两个节点不能同时为红色节点等等。
+红黑树有三种操作:  节点颜色变化， 左旋，右旋(比左旋复杂)   插入数据的时候必须是红色节点。
+红黑树时间复杂度是O(log(n))
+
+HashMap底层数据结构: jdk1.8以后使用的是数组(16 插入和删除效率低 查找效率高)+链表(8 插入和删除效率高 查找效率低)+红黑树  数组里存的是 k/v/hash/next
+hashmap在存放自定义key对象的时候 必须重写hashcode和equeals方法。
+当数据量大的时候涉及到数组扩容：
+  那么hashmap什么时候进行扩容呢？当hashmap中的元素个数超过数组大小*loadFactor时，就会进行数组扩容，loadFactor的默认值为0.75，
+  也就是说，默认情况下，数组大小为16，那么当hashmap中元素个数超过16*0.75=12的时候，就把数组的大小扩展为2*16=32
+
+
+JVM: JVM由三个子系统组成  1、类加载子系统 2、JVM运行时数据区 3、执行引擎
+JVM运行时数据区： 堆、 方法区(元空间) (前面这两种是非私有的)  虚拟机栈、本地方法栈、程序计数器(标记代码执行的行数)
+==========================虚拟机栈（本地方法栈）======================================================
+方法运行的时候会在虚拟机栈中分配栈帧(先进后出), 每个栈帧都会 包含 局部变量(方法中定义的变量)、操作数栈(比如方法中的操作数字1,233)、
+方法出口（会将方法最后执行存在操作数栈中的的值返回给调用处）、动态连接。
+=====动态连接=====
+每个栈帧都包含一个执行运行时常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态连接（Dynamic Linking）。Class 文件中存放了大量的符号引用，
+字节码中的方法调用指令就是以常量池中指向方法的符号引用作为参数。这些符号引用一部分会在类加载阶段或第一次使用时转化为直接引用，这种转化称为静态解析。另一部分将在每一次运行期间转化为直接引用，
+这部分称为动态连接。
+======================================================================================
+
+==========================方法区(元空间)=================================================
+存放的是比如 TEST.java 的对应的class对象 描述Test类里的 关键字 字段 方法等等
+=======================================================================================
+==========================堆===========================================================
+堆是存放对象的地方，虚拟机发生gc一般都是在这个区域。 堆分新生代（Eden区  + 幸存Survivor From +
+幸存Survivor To(from区和to区会相互交换)年龄达到15次后会转到老年代），老年代（Tenured存放老年代或者大对象）；
+ 有young gc/ full gc 两种垃圾回收， 其中full gc会产生Stop-The-World（STW）
+=======================================================================================
+jvm常用工具：
+jstat： 收集jvm方便运行时数据；
+jinfo: 显示虚拟机各种配置信息；
+jdump： java内存快照；
+jhat： 用于分析headdump文件，建立一个HTTP/HTML网站让用户浏览；
+jstack: 显示虚拟机线程快照；
+
+===========20200212===================================================================================
+java多线程：
+实现线程一共有四种方式： 1 继承Thread 2实现Runnable 3实现callable（有返回值） 4使用线程池的方式
+线程池类：
+ThreadPoolExecutor 所有线程池都是这个类
+Executor 执行器顶级接口
+Executors 线程池工具类
+RejectedExecutionHandler： 线程拒绝策略有四种 AbortPolicy(默认 丢弃任务抛出异常)  DiscardPolicy(丢弃任务不抛出异常) CallerRunsPolicy(将任务
+返回给调用线程) DiscardOldestPolicy(丢弃最早入队的任务，后面继续提交任务)
+线程的生命周期：
+
+===========20200213===================================================================================
+1、redis实现分布式锁，需要注意的点有 1防止死锁（本线程加的锁需要本线程解锁 一般是key是和线程id绑定在一起） setnx的时候把过期时间一起作为一个原子操作执行
+   需要另起一个字线程扫描当执行业务耗时大于过期时间的时候自动延续过期时间。  第二种方案是使用redission 自带的分布式锁(底层是使用lua脚本)。
+
+2、rediss通讯协议：
+  Redis服务器与客户端通过RESP（REdis Serialization Protocol）协议通信。它是一种直观的文本协议，优势在于实现异常简单，解析性能极好。
+
+  C: *2\r\n
+  C: $4\r\n
+  C: LLEN\r\n
+  C: $6\r\n
+  C: mylist\r\n
+  S: :48293\r\n
+参考资料：https://redis.io/topics/protocol
+
+===========20200214===================================================================================
+自定义简单的rpc框架：
+rpc流程， 客户端通过动态代理生成代理对象，在拦截方法中通过Socket传 远程调用的接口名、接口方法名、接口方法参数描述、接口方法参数四个值 通过序列化成byte[]数组传到服务端。
+服务端启动的时候会注册可以服务的接口到rpc的容器中， 服务端收到客服端传过来的byte[]数据 反序列化为对象，通过反射调用方法得到返回结果，通过序列化为byte[]数据回传到客户端，
+则一次rpc调用完成。
+涉及到的技术点有: Socket编程(BIO,NIO,AIO)/动态代理、反射/  半包、粘包、/服务降级/服务负债均衡/心跳机制/高可用/监控
+noi实现的框架有netty和Apache MINA
+序列化框架：D:\code2019\javaframework\各个序列化框架对比.jpg
+
+
+===========20200217===================================================================================
+jdk Collects.sort排序 如果是基本数据类型使用快速排序/如果是对象类型 使用归并排序。(分治和递归)
+常用主要的排序算法有: 冒泡排序/ 插入排序/ 快速排序/ 归并排序
+
+
+===========20200218===================================================================================
+1、@Configuration注解的作用和源码： 1表示是一个配置类 2表示该类中的bean依赖是从spring容器中查找 3、标注了@Configuration类 在spring容器里是生成一个代理对象。
+2、千万级qps之redis详解， redis本质， 使用tcp/ip/ resp协议(*2：表示两个数组  $4:表示一个长度为4的字符串 )连接,Socket发送数据和接收数据。 socket复用提高性能。
+
+
+===========20200218===================================================================================
+1、分布式事务TCC解决方案， 从 XA/JTA(Java Transaction API) : 一个事务管理器TM和一个或者多个资源管理器RM，二阶提交2PC。
+   1）可以使用java提供的JTA原生实现分布式事务 2）、使用XA框架Atomikos
+
+  TCC提供了一个编程框架，将整个业务逻辑分为三块：Try、Confirm和Cancel三个操作， 相当于把分布式事务由数据库层面转移到业务层面来进行控制；
+  国内常见tcc框架对比 包括性能测试:https://blog.csdn.net/yongyou890410/article/details/82719062
+  ‪D:\code2019\javaframework\各个tcc框架对比.jpg
+  视屏中讲的是tcc-transaction(https://github.com/changmingxie/tcc-transaction  demo中的整合dubbo的例子)
+
+分布式系统理论： cap理论 c：一致性 指的是数据的强一致性 各个节点的数据一致 a:可用性，对外提供服务 p:分区容错性(多个节点，当一个节点挂了其他节点可提供服务不影响对外提供服务)；
+             base理论（无法做到强一致性，则采用最终一致性来解决）： ba：基本可用 s:软状态（try、confirm、cannel 来保证数据最终一致性） e:最终一致性。
+
+2、zk分布式锁
+   分布式锁的实现方式 三种 数据库表(依靠数据库唯一键 有性能瓶颈和死锁) 、 redis、 zk：
+   zk可以创建四种节点 一种是持久化节点、 顺序自动编号持久化节点、临时节点(客户端断开节点就删除)、临时自动编号节点；
+   zk具有Watcher通知机制(一次性的、轻量化) 通知类型有：D:\code2019\javaframework\zk通知类型.png
+   zk主要有ZAB协议与Paxos算法， ZAB协议包含两种基本模式，分别是：
+    1》崩溃恢复之数据恢复
+    2》消息广播之原子广播
+    当整个集群正在启动时，或者当leader节点出现网络中断、崩溃等情况时，ZAB协议就会进入恢复模式并选举产生新的leader，当leader服务器选举出来后，
+    并且集群中有过半的机器和该leader节点完成数据同步后（同步指的是数据同步，用来保证集群中过半的机器能够和leader服务器的数据状态保持一致），
+    ZAB协议就会退出恢复模式。
+    当集群中已经有过半的Follower节点完成了和Leader状态同步以后，那么整个集群就进入了消息广播模式。
+    这个时候，在Leader节点正常工作时，启动一台新的服务器加入到集群，那这个服务器会直接进入数据恢复模式，和leader节点进行数据同步。
+    同步完成后即可正常对外提供非事务请求的处理。
+  已经实现分布式锁的客户端：
+  通过Curator操作Zookeeper的例子（事务，分布式锁，原子自增)）：https://www.jianshu.com/p/104715f5e79c
+
+

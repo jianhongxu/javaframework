@@ -9,6 +9,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,6 +47,12 @@ class DemoApplicationTests {
         restTemplate.put("http://localhost:" + port + "/product/" + productId, newProduct);
         Product testProduct = restTemplate.getForObject("http://localhost:" + port + "/product/" + productId, Product.class);
         assertThat(testProduct.getPrice()).isEqualTo(newPrice);
+    }
+
+
+    public static void main(String[] args) {
+        Map map = new HashMap();
+        map.put(1,"skjdf");
     }
 
 }
