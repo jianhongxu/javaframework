@@ -156,7 +156,6 @@
 
 </project>
 
-
 <!--  公司是的这种写法
            <plugin>
                <groupId>org.mybatis.generator</groupId>

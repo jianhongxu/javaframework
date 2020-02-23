@@ -1,0 +1,12 @@
+***********百分之百大厂面试必问spring，AOP,IOC，JAVA虚拟机，线程池，高并发， HashMap *******************************************************************************************************
+===========20200223===================================================================================
+1、java日志框架相关
+   jcl(commons-log apache下的)、jul(jdk自带日志框架)、log4j、log4j2、slf4j、logback;
+   日志门面（抽象层)有：JCL 、 SLF4j 、Jboss-logging;
+   日志实现:JUL 、log4j、 log4j2、 logback;
+
+   最新的框架一般都是使用slf4j门面[http://www.slf4j.org/]，
+   然后slf4j有两个重要的概念 一个是binding绑定器(Binding with a logging framework at deployment time)
+   还有一个是日志转化器 xx-over-slf4j.jar(Bridging legacy APIs);
+2、mybatis源码分析：
+  文档和图：D:\code2019\javaframework\mybatis源码解析和相关面试题目.txt 和D:\code2019\javaframework\mybatis源码-1.png
