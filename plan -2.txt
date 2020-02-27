@@ -1,4 +1,5 @@
-***********百分之百大厂面试必问spring，AOP,IOC，JAVA虚拟机，线程池，高并发， HashMap *******************************************************************************************************
+***********2020年大厂面试必问重点，过年跳槽不是梦想 *******************************************************************************************************
+https://www.bilibili.com/video/av85637594?p=3
 ===========20200223===================================================================================
 1、java日志框架相关
    jcl(commons-log apache下的)、jul(jdk自带日志框架)、log4j、log4j2、slf4j、logback;
@@ -10,3 +11,164 @@
    还有一个是日志转化器 xx-over-slf4j.jar(Bridging legacy APIs);
 2、mybatis源码分析：
   文档和图：D:\code2019\javaframework\mybatis源码解析和相关面试题目.txt 和D:\code2019\javaframework\mybatis源码-1.png
+
+3、spring cloud微服务架构之注册中心
+   为什么需要注册中心？
+   自己写http请求调用，一个服务多个节点的时候不好做负载均衡； 不好感知服务的上下线状态； 没有心跳机制； 没有重试机制； 没有健康检查和机器各种指标检查；服务地址会硬编码等等；
+
+    在分布式系统中，我们不仅仅是需要在注册中心找到服务和服务地址的映射关系这么简单，我们还需要考虑更多更复杂的问题：
+    服务注册后，如何被及时发现
+    服务宕机后，如何及时下线
+    服务如何有效的水平扩展
+    服务发现时，如何进行路由
+    服务异常时，如何进行降级
+    注册中心如何实现自身的高可用
+
+    这里问题的解决都依赖于注册中心。简单看，注册中心的功能有点类似于DNS服务器或者负载均衡器，而实际上，注册中心作为微服务的基础组件，可能要更加复杂，
+    也需要更多的灵活性和时效性。
+
+   主流微服务注册中心浅析和对比
+   【Nacos	Eureka	Consul	CoreDNS	Zookeeper】
+   https://blog.csdn.net/xxscj/article/details/90901505
+   对比图：  D:/code2019/javaframework/主流注册中心对比-微服务.png
+
+   **负载均衡=== Eureka的负载均衡是由ribbon来完成的，而Consul则是由Fabio做负载均衡。
+   负载均衡：分服务端负债均衡[ngnix反向代理]和客户端负载均衡(ribbon等)
+
+===========20200224===================================================================================
+1、 springMVC源码解析：
+
+    SpringMVC的流程？
+    1、用户发送请求至前端控制器DispatcherServlet；
+    2、DispatcherServlet收到请求后，调用HandlerMapping处理器映射器，请求获取Handle；
+    3 处理器映射器根据请求url找到具体的处理器，生成处理器对象及处理器拦截器(如果有则生成)一并返回给DispatcherServlet；
+    4 DispatcherServlet 调用 HandlerAdapter处理器适配器；
+    5 HandlerAdapter 经过适配调用 具体处理器(Handler，也叫后端控制器)；
+    6 Handler执行完成返回ModelAndView；
+    7 HandlerAdapter将Handler执行结果ModelAndView返回给DispatcherServlet；
+    8 DispatcherServlet将ModelAndView传给ViewResolver视图解析器进行解析；
+    9 ViewResolver解析后返回具体View；
+    10 DispatcherServlet对View进行渲染视图（即将模型数据填充至视图中）
+    11 DispatcherServlet响应用户。
+
+2 Spring MVC的主要组件？
+    前端控制器 DispatcherServlet（不需要程序员开发）
+    作用：接收请求、响应结果，相当于转发器，有了DispatcherServlet 就减少了其它组件之间的耦合度。
+
+    理器映射器HandlerMapping（不需要程序员开发）
+    作用：根据请求的URL来查找Handler
+
+    处理器适配器HandlerAdapter
+    注意：在编写Handler的时候要按照HandlerAdapter要求的规则去编写，这样适配器HandlerAdapter才可以正确的去执行Handler。
+
+    处理器Handler（需要程序员开发）
+
+    视图解析器 ViewResolver（不需要程序员开发）
+    作用：进行视图的解析，根据视图逻辑名解析成真正的视图（view）
+
+    视图View（需要程序员开发jsp）
+    View是一个接口， 它的实现类支持不同的视图类型（jsp，freemarker，pdf等等）
+
+
+3 扩展 重定向redirect：浏览器地址栏会变，对象中的值变为null， 相对于浏览器是两次请求;
+         转发forward：浏览器地址栏值不会变，对象中的值也还存在，相对于浏览器是一次请求；
+
+
+4 jwt和非对称加密；
+  jwt是一个签名， 非对称加密 如rsa加密； 非对称加密会产生一对密钥， 私钥自己保管，公钥给客服端；(注意通过私钥可以推算出公钥);
+  SHA 安全哈希算法（Secure HashAlgorithm）主要适用于数字签名标准（DigitalSignature Standard DSS）,是一种签名和md5一样；
+
+
+===========20200225===================================================================================
+这天没有学【罪过】
+
+
+===========20200226===================================================================================
+1 1.1 webservice的原理：
+  webservice 有客服端(需要调用webservice的服务里引用webservice客户端的jar)， 有服务端(需要发布webservice服务的服务里引用webservice服务的jar);  webservice之间的
+  调用相当于webservice的中间件之间的通信[app->webClient->webServiceClient->app2];
+  技术包含：socket编程、tcp/ip、java反射[方法调用，通过包找到该包下所有的文件 所有的类名]、如果是传输对象涉及序列化技术;
+
+  2 webService三要素：SOAP、WSDL、UDDI
+  SOAP：描述传递信息的格式，可以和现存的许多因特网协议和格式结合使用，包括超文本传输协议（HTTP），简单邮件传输协议（SMTP），多用途网际邮件扩充协议（MIME）。它还支持从消息系统到远程过程调用（RPC）等大量的应用程序。
+       SOAP使用基于XML的数据结构和超文本传输协议(HTTP)的组合定义了一个标准的方法来使用Internet上各种不同操作环境中的分布式对象。
+  WSDL（Web Service Description Language 网络服务描述语言）：用来描述如何访问具体的接口。WSDL 文档可以分为两部分：顶部分由抽象定义组成，而底部分则由具体描述组成。
+  UDDI（Universal Description, Discovery and Integration通用描述、发现与集成服务）：是一种规范，它主要提供基于Web服务的注册和发现机制，
+       为Web服务提供三个重要的技术支持：①标准、透明、专门描述Web服务的机制；②调用Web服务的机制；③可以访问的Web服务注册中心。通俗来说就是用来管理，分发，查询webService。
+
+  3 本文选择了比较流行几个框架：（https://blog.csdn.net/dzq_boyka/article/details/80360297）
+   Apache Axis1、Apache Axis2、Codehaus XFire、Apache CXF、Apache Wink、Jboss  RESTEasy、sun JAX-WS（最简单、方便)，
+   采用Java作为测试用例，通过本机和远程两种进行测试方式，对这几种框架进行了性能测试，并对测试结果分析和性能比较，最后并对性能优异的框架进行了推荐。
+   最后性能 测试的结果是cxf客户端+cxf服务端的性能最佳;
+
+  4以上几种框架的总结：https://www.cnblogs.com/it-deepinmind/p/11819833.html
+   a：目前开发Web Service的几个框架，分别为Axis，axis2，Xfire，CXF以及JWS(也就是前面所述的JAX-WS，这是Java6发布所提供的对Web Service服务的一种实现。)
+   b：Axis与XFire已随着技术不断的更替慢慢落幕，都已不再更新。
+   c：以axis2与cxf所最为常用，目前也只有axis2和cxf官方有更新。
+   d：从使用场景来说，如果你需要多语言的支持，你应该选择AXIS2。如果你需要把你的实现侧重JAVA并希望和Spring集成，CXF就是更好的选择。
+
+   1.2手写dubbo：
+   主要用到的技术有： 内嵌tomcat或者netty；common-io; jdk默认序列化； 序列化反序列化到本地文件；jdk动态代理；java反射； java URLConnection(http调用)；负载均衡；
+
+
+2 dubbo的负载均衡策略
+  dubbo有默认四种负载均衡 [随机]、[轮询调用根据权重的值进行循环]、[最少活跃数调用法]、[一致性hash]；
+  由LoadBalance类上的注解@SPI注解可以看到，dubbo默认的负载均衡策略是随机调用法
+
+
+3 微服务中负载均衡组件 Ribbon
+  API网关的请求转发等内容，实际上都是通过Ribbon来实现的，包括后续我们将要介绍的Feign，它也是基于Ribbon实现的工具；
+  比如Eureka中的org.springframework.cloud.netflix.ribbon.eureka.RibbonEurekaAutoConfiguration；
+  Consul中的org.springframework.cloud.consul.discovery.RibbonConsulAutoConfiguration；
+
+4 for循环里的递归调用(中链融信贷还款方法中)
+
+5 apache commons-io包处理流和文件的工具包 使用比较方便(1.2手写dubbo)
+
+
+===========20200227===================================================================================
+1 spring aop技术： Aspect切面  Join point:连接点(被拦截的方法)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
