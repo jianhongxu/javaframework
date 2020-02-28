@@ -1,5 +1,8 @@
 import com.xjh.aop.CalculatorService;
+import com.xjh.aop.DogService;
+import com.xjh.aop.TestService;
 import com.xjh.config.MainConfig;
+import com.xjh.dto.User;
 import com.xjh.tx.UserService;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -19,7 +22,11 @@ public class TestDemo {
 
         //User u = annotationConfigApplicationContext.getBean(User.class);
         //System.out.println(u);
+        TestService testService = annotationConfigApplicationContext.getBean(TestService.class);
+        System.out.println(testService);
 
+        CalculatorService calculatorService = annotationConfigApplicationContext.getBean(CalculatorService.class);
+        System.out.println(calculatorService);
     }
 
     @Test
@@ -51,9 +58,12 @@ public class TestDemo {
      */
     @Test
     public void test03(){
-        CalculatorService u = annotationConfigApplicationContext.getBean(CalculatorService.class);
-        u.div(4,2);
+        //CalculatorService u = annotationConfigApplicationContext.getBean(CalculatorService.class);
+        //u.div(4,2);
         // u.div(4,0);
+
+        DogService dogService = annotationConfigApplicationContext.getBean(DogService.class);
+        dogService.test("xujianhong",10);
     }
 
     /**

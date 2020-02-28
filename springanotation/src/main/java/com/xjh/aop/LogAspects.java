@@ -20,7 +20,7 @@ public class LogAspects {
      * 切入点的定义
      * aop表达式
      */
-    @Pointcut("execution(public int com.xjh.aop.CalculatorService.*(*,*))")
+    @Pointcut("execution(public int com.xjh.aop.*.*(*,*))")
     public void pointCut(){}
 
 

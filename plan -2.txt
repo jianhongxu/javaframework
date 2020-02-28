@@ -159,6 +159,8 @@ https://www.bilibili.com/video/av85637594?p=3
                    c、动态代理织入，在运行期为目标类添加通知生成子类的方式。
                    把切面应用到目标对象来创建新的代理对象的过程，Spring采用动态代理织入，而AspectJ采用编译期织入和类装载期织入。
 
+  *自己测试的一个列子， 如果一个类是生成的代理对象(JDK的方式)在spring容器中， 那么在依赖注入的时候一定要用改类的接口类去依赖注入，否则报错; 如果使用的是cglib的方式生成的代理对象则没有任何问题;[还是要面向接口编程]
+
 
 2 jdk动态代理源码分析 代码[com.xjh.springboot.springmvc.baseaop]
    大概流程
@@ -184,6 +186,8 @@ https://www.bilibili.com/video/av85637594?p=3
        5 postProcessAfterInitilization
        6 destory方法
        注意：3和5是在BeanPostProcessor 接口中定义的方法
+
+
 2 spring扩展点官网有三种
    1 BeanPostProcessor(在init方法前后可以扩展，返回的bean可以自定义)
    2 BeanFactoryPostProcessor(在beanFactory标准此时化后调用，所有的bean定义已经保存在beanFactory，但是bean的实例未创建的时候)

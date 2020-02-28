@@ -6,5 +6,5 @@ package com.xjh.aop;
  */
 public interface DogService {
 
-    void test(String name);
+    int test(String name, Integer age);
 }
