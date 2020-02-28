@@ -30,7 +30,7 @@ public class LogAspects {
     //指定那个方法来切入
     @Before("pointCut()")
     public void logStart(JoinPoint joinPoint){
-        System.out.println("Before方法运行前 方法名："+joinPoint.getSignature().getName()+" 参数：{}"+ Arrays.toString(joinPoint.getArgs()));
+        System.out.println("《前置通知》 方法名："+joinPoint.getSignature().getName()+" 参数：{}"+ Arrays.toString(joinPoint.getArgs()));
     }
 
     /**
@@ -38,7 +38,7 @@ public class LogAspects {
      */
     @After("pointCut()")
     public void logEnd(JoinPoint joinPoint){
-        System.out.println("After方法运行结束");
+        System.out.println("《后置通知-finally》After方法运行结束");
 
     }
 
@@ -47,7 +47,7 @@ public class LogAspects {
      */
     @AfterReturning(value = "pointCut()",returning = "result")
     public void logReturn(Object result){
-        System.out.println("AfterReturning方法运行返回 返回值：{}"+result);
+        System.out.println("《返回通知》AfterReturning方法运行返回 返回值：{}"+result);
 
     }
 
@@ -56,6 +56,6 @@ public class LogAspects {
      */
     @AfterThrowing(value = "pointCut()", throwing="excption")
     public void logExcepiton(Exception excption){
-        System.out.println("AfterThrowing 方法运行异常 异常信息：{}"+excption);
+        System.out.println("《异常通知》AfterThrowing 方法运行异常 异常信息：{}"+excption);
     }
 }

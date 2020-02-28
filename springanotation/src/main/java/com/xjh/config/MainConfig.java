@@ -66,6 +66,9 @@ public class MainConfig {
      *      spring底层很多地方都用了BeanPostProcessor
      *      bean的赋值、注入其他主键、 @Autoware、bean生命周期注解功能、 @Async注解等等
      *
+     ****************************spring中bean的生命周期********************************
+     * spring中bean的生命周期：
+     * 1构造方法  2 属性设置方法 3 postProcessBeforeInitlization 4 init方法 5postProcessAfterInitilization 6 destory方法     注意：3和5是在BeanPostProcessor 接口中定义的方法
      *
      *
      *  ID
@@ -138,9 +141,9 @@ public class MainConfig {
         return new MyFactoryBean();
     }
 
-    @Bean(initMethod = "init", destroyMethod ="destory" )
-    @Profile("test")
 
+    @Bean(initMethod = "init", destroyMethod ="destory" )
+    //@Profile("test")
     public Car car(){
         return new Car();
     }

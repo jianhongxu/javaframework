@@ -13,6 +13,7 @@ import javax.annotation.PreDestroy;
 @Component
 public class Dog  {
 
+
     @PostConstruct
     public void destroy() {
         System.out.println("注解@PostConstruct的方式实现相当与destroy()方法............DOG ");
