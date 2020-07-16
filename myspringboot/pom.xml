@@ -83,11 +83,12 @@
         </dependency>
 
         <!--引入自定义的start-->
-        <dependency>
+       <!-- <dependency>
             <groupId>com.xjh.ext</groupId>
             <artifactId>ext-spring-boot-starter</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        -->
 
         <!--引入自定义的引入缓存依赖-->
         <dependency>
